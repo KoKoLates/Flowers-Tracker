@@ -1,2 +1,2 @@
-# eustoma_tracker
-A tracker and counter for eustoma grandiflorum flowers with YOLOv4 and Deep SORT.
+# flowers tracker
+A tracker and counter for Eustoma Grandiflorum flowers by using `YOLOv4` and `Deep SORT`.
