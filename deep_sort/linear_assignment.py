@@ -7,9 +7,9 @@ import numpy as np
 INFTY_COST = 1e+5
 
 def min_cost_matching(
-    distance_metric, max_distance: float, tracks, detections, 
-    track_indices=None, detection_indices=None
-) -> list:
+        distance_metric, max_distance: float, tracks, detections, 
+        track_indices=None, detection_indices=None
+    ) -> list:
     """
     Solving the linear assignment problem.
     :param distance_metric: a list of tracks and detections as well as
@@ -51,10 +51,15 @@ def min_cost_matching(
     return matches, unmatched_tracks, unmatched_detections
 
 def matching_cascade(
-    distance_metric, max_distance, cascade_depth, tracks, detections,
-    track_indices=None, detection_indices=None
-) -> list:
+        distance_metric, max_distance:float, cascade_depth:int, tracks, 
+        detections, track_indices=None, detection_indices=None
+    ) -> list:
     """
+    Running matching cascade
+    :param distance_metric: The distance metric is given a list of tracks 
+    and detections as well as a list of N track indices and M detection indices.
+    :param max_distance (float): Gating threshold
+    :param cascade_depth (int): The cascade depth
     """
     if track_indices is None:
         track_indices = list(range(len(tracks)))
@@ -85,9 +90,9 @@ def matching_cascade(
 
 
 def get_cost_matrix(
-    kf, cost_matrix: np.ndarray, tracks, detections, track_indices, 
-    detection_indices, gated_cost=INFTY_COST, only_position=False
-) -> np.ndarray:
+        kf, cost_matrix: np.ndarray, tracks, detections, track_indices, 
+        detection_indices, gated_cost=INFTY_COST, only_position=False
+    ) -> np.ndarray:
     """
     Invalidate infeasible entries in cost matrix based on the state
     distributions obtained by Kalman filtering.
