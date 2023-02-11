@@ -93,8 +93,10 @@ class KalmanFilter(object):
         )
         return new_mean, new_covariance
 
-    def gating_distance(self, mean:np.ndarray, covariance:np.ndarray, 
-                        measurements:np.ndarray, only_position:bool=False) -> np.ndarray:
+    def gating_distance(
+        self, mean:np.ndarray, covariance:np.ndarray, 
+        measurements:np.ndarray, only_position:bool=False
+    ) -> np.ndarray:
         """
         Compute gating distance between state distribution and measurements
         """
