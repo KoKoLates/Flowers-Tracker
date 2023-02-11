@@ -1,30 +1,18 @@
 
-import os, argparse, numpy as np
+import os, numpy as np
 
 from keras import backend as K
-from keras.models import load_model
 from keras.layers import Input
-
-from yolov4.utils import Config
 from yolov4.model import yolo_eval, yolo4_body
 
-
-# configure the arguments parameter
-parser = argparse.ArgumentParser()
-parser.add_argument('--input_size', type=int, default=608, help='Image input size 320 416 512 608.')
-parser.add_argument('--min_score', type=float, default=0.3, help='minimum output score.')
-parser.add_argument('--iou', type=float, default=0.5, help='target threshold.')
-parser.add_argument('--model_path', type=str, default='model_data/yolov4.h5', help='model save type.')
-parser.add_argument('--weights_path', type=str, default='model_data/yolov4.weights', help='weight file.')
-args = parser.parse_args()
-
 class Yolo4(object):
-    def __init__(self, score, iou, model_path, weights_path,input_size, gpu_num=1):
+    def __init__(self, score:float, iou:float, input_size,
+                 model_path:str, weights_path:str, gpu_num:int=1) -> None:
         self.score = score
-        self.input_size = input_size
-        self.weights_path = weights_path
-        self.model_path = model_path
         self.iou = iou
+        self.input_size = input_size
+        self.model_path = model_path
+        self.weights_path = weights_path
         self.gpu_num = gpu_num
         self.load_yolo()
 
@@ -32,14 +20,16 @@ class Yolo4(object):
         model_path = os.path.expanduser(self.model_path)
         assert model_path.endswith('.h5'), 'Keras model or weights must be a .h5 file.'
 
-        self.class_names = Config.CLASSES
-        self.anchors = np.array(Config.ANCHORS).reshape(-1, 2)
+        self.class_names = self.get_class('../cfg/classes.txt')
+        self.anchors = self.get_anchors('../cfg/anchors.txt')
 
         num_anchors = len(self.anchors)
         num_classes = len(self.class_names)
 
+        self.sess = K.get_session()
+
         # Load model, or construct model and load weights.
-        self.yolo4_model = yolo4_body(Input(shape=(self.input_size, self.input_size, 3)), num_anchors//3, num_classes)
+        self.yolo4_model = yolo4_body(Input(shape=(self.input_size[0], self.input_size[1], 3)), num_anchors//3, num_classes)
 
         # Read and convert darknet weight
         self.load_weights(self.yolo4_model, self.weights_path)
@@ -56,9 +46,11 @@ class Yolo4(object):
         )
         print('Done.')
 
-    def load_weights(self,model, weights_file):
+    def load_weights(self, model, weights_file):
+        print('[INFO] Loading the weights.')
         wf = open(weights_file, 'rb')
         major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
+        
 
         j = 0
         for i in range(110):
@@ -96,5 +88,29 @@ class Yolo4(object):
         assert len(wf.read()) == 0, 'failed to read all data'
         wf.close()
 
+    def get_class(self, file_path:str):
+        classes_path = os.path.expanduser(file_path)
+        with open(classes_path) as f:
+            class_names = f.readlines()
+        class_names = [c.strip() for c in class_names]
+        return class_names
+
+    def get_anchors(self, file_path:str):
+        anchors_path = os.path.expanduser(file_path)
+        with open(anchors_path) as f:
+            anchors = f.readline()
+        anchors = [float(x) for x in anchors.split(',')]
+        return np.array(anchors).reshape(-1, 2)
+
     def close_session(self):
         self.sess.close()
+
+if __name__ == '__main__':
+    model_path = '' # model.h5 
+    weight_path = '' # yolov4.weight
+
+    score, iou = 0.5, 0.5
+    model_image_size = (608, 608) # To be re-assign
+
+    yolov4_model = Yolo4(score, iou, model_image_size ,model_path, weight_path)
+    yolov4_model.close_session()

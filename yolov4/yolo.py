@@ -6,7 +6,7 @@ from keras import backend as K
 from keras.models import load_model
 
 from yolov4.model import yolo_eval, Mish
-from yolov4.utils import letterBox_image, Config
+from yolov4.utils import letterBox_image
 
 
 
@@ -14,8 +14,8 @@ class YOLO(object):
     def __init__(self, model_path:str, score:float=0.5) -> None:
         self.model_path = model_path
         self.score, self.iou = score, 0.5
-        self.class_names = Config.CLASSES
-        self.anchors = np.array(Config.ANCHORS).reshape(-1, 2)
+        self.class_names = self._get_classes('../cfg/classes.txt')
+        self.anchors = self._get_anchors('../cfg/anchors.txt')
         self.sess = K._get_session()
         self.model_image_size = (608, 608) # fixed size or (None, None)
         self.is_fixed_size = self.model_image_size != (None, None)
@@ -28,7 +28,7 @@ class YOLO(object):
         self.yolo_model = load_model(model_path, custom_objects={'Mish': Mish}, compile=False)
         print('{} model, anchors, and classes loaded.'.format(model_path))
 
-        colors = self._color(len(Config.CLASSES))
+        colors = self._color(len(self.class_names))
         self.input_image_shape = K.placeholder(shape=(2, ))
         boxes, scores, classes = yolo_eval(
             self.yolo_model.output, self.anchors, len(self.class_names), 
@@ -44,6 +44,30 @@ class YOLO(object):
         random.shuffle(colors)
         random.seed(None)
         return colors
+    
+
+    def _get_classes(self, file_path:str):
+        """
+        Get the classes name (type) from the indicate file.
+        :param file_path (str): the path of indicated file.
+        """
+        classes_path = os.path.expanduser(file_path)
+        with open(classes_path) as f:
+            class_names = f.readlines()
+        class_names = [c.strip() for c in class_names]
+        return class_names
+    
+    def _get_anchors(self, file_path:str):
+        """
+        Get the anchors list from the indicate file.
+        :param file_path (str): the path of indicated file.
+        """
+        anchors_path = os.path.expanduser(self.anchors_path)
+        with open(anchors_path) as f:
+            anchors = f.readline()
+            anchors = [float(x) for x in anchors.split(',')]
+            anchors = np.array(anchors).reshape(-1, 2)
+        return anchors
     
     def detect_image(self, image):
         """

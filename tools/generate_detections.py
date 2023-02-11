@@ -17,7 +17,8 @@ def _run_in_batches(f, data_dict, out, batch_size):
 
 
 def extract_image_patch(image, bbox, patch_shape):
-    """Extract image patch from bounding box.
+    """
+    Extract image patch from bounding box.
     Parameters
     ----------
     image : ndarray

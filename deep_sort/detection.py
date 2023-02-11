@@ -2,13 +2,16 @@ import numpy as np
 
 class Detection(object):
     """Class represent a bounding box detection"""
-    def __init__(self, tlwh, cofidence, feature) -> None:
+    def __init__(self, tlwh, score, 
+                 classe, color, feature) -> None:
         """
         :param tlwh: bounding box in format `(x, y, w, h)`
         :param feature: A feature vector that describes the object contained in this image.
-        :param confidence (float): Detector confidence score.
+        :param score (float): Detector confidence score.
         """
-        self.confidence = float(cofidence)
+        self.confidence = float(score)
+        self.classe = classe
+        self.color = color
         self.tlwh = np.asarray(tlwh, dtype=np.float32)
         self.feature = np.asarray(feature, dtype=np.float32)
         

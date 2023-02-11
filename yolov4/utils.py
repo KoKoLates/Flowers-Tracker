@@ -1,15 +1,5 @@
-import numpy as np
+
 from PIL import Image
-
-class Config:
-    """ Some config about class and anchor """
-    CLASSES = {0: 'flower'}
-    ANCHORS = np.array(
-        [12, 16, 19, 36, 40, 28, 36, 75, 76, 55, 
-         72, 146, 142, 110, 192, 243, 459, 401],
-        dtype=np.float32
-    )
-
 
 def letterBox_image(image, size):
     """ resize image with unchanged aspect ratio using padding """
