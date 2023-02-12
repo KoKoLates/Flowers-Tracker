@@ -1,10 +1,11 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import cv2, time, argparse, numpy as np
+import cv2, time, numpy as np
 
 from PIL import Image
 from yolov4.yolo import YOLO
+from args import tracker_arguments
 from tools import generate_detections
 
 from deep_sort import nn_matching
@@ -13,16 +14,19 @@ from deep_sort.tracker import Tracker
 from deep_sort.detection import Detection
 
 if __name__ == '__main__':
+    # Arguments parameter configuration
+    args = tracker_arguments()
+
     # Deep SORT and Tracker
-    encoder = generate_detections.create_box_encoder('../cfg/market1501.pb', batch_size=1)
-    metric = nn_matching.NearestNeighborDistanceMetric('cosine', 0.3, None)
+    encoder = generate_detections.create_box_encoder(args.feature, batch_size=1)
+    metric = nn_matching.NearestNeighborDistanceMetric('cosine', args.mini_score, None)
     tracker = Tracker(metric)
 
     # loding the model
-    yolo = YOLO('yolo.h5', 0.3)
+    yolo = YOLO(args.model_file, args.mini_score)
 
     # Reading the video
-    video = cv2.VideoCapture('video.mp4')
+    video = cv2.VideoCapture(args.video)
 
     # Saving the video
     fourcc = cv2.VideoWriter_fourcc(*'X264') # MPEG-4 for *.mp4 / Using *XVID for MPEG-4 *.avi

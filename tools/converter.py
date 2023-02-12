@@ -1,5 +1,6 @@
-
+#! /usr/bim/env python3
 import os, numpy as np
+from args import converter_arguments
 
 from keras import backend as K
 from keras.layers import Input
@@ -7,12 +8,14 @@ from yolov4.model import yolo_eval, yolo4_body
 
 class Yolo4(object):
     def __init__(self, score:float, iou:float, input_size,
-                 model_path:str, weights_path:str, gpu_num:int=1) -> None:
-        self.score = score
-        self.iou = iou
+                 model_path:str, weights_path:str, 
+                 classes_path:str, anchors_path:str, gpu_num:int=1) -> None:
+        self.score, self.iou = score, iou
         self.input_size = input_size
         self.model_path = model_path
         self.weights_path = weights_path
+        self.classes_path = classes_path
+        self.anchors_path = anchors_path
         self.gpu_num = gpu_num
         self.load_yolo()
 
@@ -20,8 +23,8 @@ class Yolo4(object):
         model_path = os.path.expanduser(self.model_path)
         assert model_path.endswith('.h5'), 'Keras model or weights must be a .h5 file.'
 
-        self.class_names = self.get_class('../cfg/classes.txt')
-        self.anchors = self.get_anchors('../cfg/anchors.txt')
+        self.class_names = self.get_class(self.classes_path)
+        self.anchors = self.get_anchors(self.anchors_path)
 
         num_anchors = len(self.anchors)
         num_classes = len(self.class_names)
@@ -106,11 +109,15 @@ class Yolo4(object):
         self.sess.close()
 
 if __name__ == '__main__':
-    model_path = '' # model.h5 
-    weight_path = '' # yolov4.weight
+    args = converter_arguments()
+    model_path = args.model_path
+    weight_path = args.weight_path
+    classe_path = args.class_path
+    anchor_path = args.anchor_path
 
     score, iou = 0.5, 0.5
     model_image_size = (608, 608) # To be re-assign
 
-    yolov4_model = Yolo4(score, iou, model_image_size ,model_path, weight_path)
+    yolov4_model = Yolo4(score, iou, model_image_size ,
+                         model_path, weight_path, classe_path, anchor_path)
     yolov4_model.close_session()
