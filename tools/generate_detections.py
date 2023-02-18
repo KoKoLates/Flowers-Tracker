@@ -1,5 +1,10 @@
 import os, cv2, errno, argparse
-import numpy as np, tensorflow as tf
+import numpy as np, tensorflow._api.v2.compat.v1 as tf
+tf.disable_v2_behavior()
+
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+if physical_devices:
+    tf.config.experimental.set_memory_growth(physical_devices[0], enable=True)
 
 
 def _run_in_batches(f, data_dict, out, batch_size):
@@ -16,27 +21,18 @@ def _run_in_batches(f, data_dict, out, batch_size):
         out[e:] = f(batch_data_dict)
 
 
-def extract_image_patch(image, bbox, patch_shape):
+def extract_image_patch(image:np.ndarray, bbox, patch_shape) -> cv2.Mat:
     """
     Extract image patch from bounding box.
-    Parameters
-    ----------
-    image : ndarray
-        The full image.
-    bbox : array_like
-        The bounding box in format (x, y, width, height).
-    patch_shape : Optional[array_like]
-        This parameter can be used to enforce a desired patch shape
-        (height, width). First, the `bbox` is adapted to the aspect ratio
-        of the patch shape, then it is clipped at the image boundaries.
-        If None, the shape is computed from :arg:`bbox`.
-    Returns
-    -------
-    ndarray | NoneType
-        An image patch showing the :arg:`bbox`, optionally reshaped to
-        :arg:`patch_shape`.
-        Returns None if the bounding box is empty or fully outside of the image
-        boundaries.
+    :param image (np.ndarray): The full image
+    :param bbox: The bounding box in format `(x, y, width, height)`.
+    :param patch_shape: This parameter can be used to enforce a desired 
+    patch shape `(height, width)`. First, the `bbox` is adapted to the aspect ratio
+    of the patch shape, then it is clipped at the image boundaries.
+    If None, the shape is computed from :arg:`bbox`.
+
+    :return: An image patch showing the `bbox`, optionally reshaped to`patch_shape`.
+    :rtype: np.ndarray | NoneType
     """
     bbox = np.array(bbox)
     if patch_shape is not None:
@@ -69,11 +65,10 @@ class ImageEncoder(object):
         with tf.gfile.GFile(checkpoint_filename, "rb") as file_handle:
             graph_def = tf.GraphDef()
             graph_def.ParseFromString(file_handle.read())
+        
         tf.import_graph_def(graph_def, name="net")
-        self.input_var = tf.get_default_graph().get_tensor_by_name(
-            "net/%s:0" % input_name)
-        self.output_var = tf.get_default_graph().get_tensor_by_name(
-            "net/%s:0" % output_name)
+        self.input_var = tf.get_default_graph().get_tensor_by_name("%s:0" % input_name)
+        self.output_var = tf.get_default_graph().get_tensor_by_name("%s:0" % output_name)
 
         assert len(self.output_var.get_shape()) == 2
         assert len(self.input_var.get_shape()) == 4
@@ -99,8 +94,7 @@ def create_box_encoder(model_filename, input_name="images",
             patch = extract_image_patch(image, box, image_shape[:2])
             if patch is None:
                 print("WARNING: Failed to extract image patch: %s." % str(box))
-                patch = np.random.uniform(
-                    0., 255., image_shape).astype(np.uint8)
+                patch = np.random.uniform(0., 255., image_shape).astype(np.uint8)
             image_patches.append(patch)
         image_patches = np.asarray(image_patches)
         return image_encoder(image_patches, batch_size)
@@ -108,22 +102,17 @@ def create_box_encoder(model_filename, input_name="images",
     return encoder
 
 
-def generate_detections(encoder, mot_dir, output_dir, detection_dir=None):
-    """Generate detections with features.
-    Parameters
-    ----------
-    encoder : Callable[image, ndarray] -> ndarray
-        The encoder function takes as input a BGR color image and a matrix of
-        bounding boxes in format `(x, y, w, h)` and returns a matrix of
-        corresponding feature vectors.
-    mot_dir : str
-        Path to the MOTChallenge directory (can be either train or test).
-    output_dir
-        Path to the output directory. Will be created if it does not exist.
-    detection_dir
-        Path to custom detections. The directory structure should be the default
-        MOTChallenge structure: `[sequence]/det/det.txt`. If None, uses the
-        standard MOTChallenge detections.
+def generate_detections(encoder, mot_dir:str, output_dir:str, 
+                        detection_dir:str=None) -> None:
+    """
+    Generate detections with features.
+    :param encoder: The encoder function takes as input a BGR color image and 
+    a matrix of bounding boxes in format `(x, y, w, h)` and returns a matrix of
+    corresponding feature vectors.
+    :param mot_dir (str): Path to the MOTChallenge directory
+    :param output_dir (str): Path to the output directory
+    :param detection_dir (str): Path to custom detections. 
+    The directory structure should be the default MOTChallenge structure: `[sequence]/det/det.txt`
     """
     if detection_dir is None:
         detection_dir = mot_dir
@@ -171,22 +160,25 @@ def generate_detections(encoder, mot_dir, output_dir, detection_dir=None):
 
 
 def parse_args():
-    """Parse command line arguments."""
+    """ Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Re-ID feature extractor")
     parser.add_argument(
         "--model",
         default="resources/networks/mars-small128.pb",
         help="Path to freezed inference graph protobuf.")
     parser.add_argument(
-        "--mot_dir", help="Path to MOTChallenge directory (train or test)",
+        "--mot_dir", 
+        help="Path to MOTChallenge directory (train or test)",
         required=True)
     parser.add_argument(
-        "--detection_dir", help="Path to custom detections. Defaults to "
+        "--detection_dir", default=None, 
+        help="Path to custom detections. Defaults to "
         "standard MOT detections Directory structure should be the default "
-        "MOTChallenge structure: [sequence]/det/det.txt", default=None)
+        "MOTChallenge structure: [sequence]/det/det.txt")
     parser.add_argument(
-        "--output_dir", help="Output directory. Will be created if it does not"
-        " exist.", default="detections")
+        "--output_dir", default="detections",
+        help="Output directory. Will be created if it does not"
+        " exist.")
     return parser.parse_args()
 
 

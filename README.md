@@ -2,16 +2,24 @@
 A tracker and counter for Eustoma Grandiflorum flowers by using `YOLOv4` and `Deep SORT`.
 
 ## Requirement
-* OpenCV
-* sklearn
-* numpy 1.15.0
-* torch
-* tensorflow
+* tensorflow-gpu==2.3.0
+* opencv-python==4.1.1.26
+* lxml
+* tqdm
+* argparse
+* easydict
+* matplotlib
+* pillow
 
 ## Quick Start
 __0. Requirements Setup__
-```
+```python
+# tensorflow CPU
 pip install -r requirements.txt
+
+# tensorflow GPU
+# tensorflow 2 packages require a PIP version > 19.0
+pip install -r requirements-gpu.txt
 ```
 
 ## Citation

@@ -1,0 +1,11 @@
+name: converter_config
+--- # param
+tiny: False
+class_file: './cfg/classes.txt'
+--- # model
+input_size: 416
+framework: tf # could be (tf, trt, tflite)
+score_threshold: 0.2
+--- # loader
+weight_path: './cfg/yolov4.weights'
+output_path: './checkpoints/yolov4'
