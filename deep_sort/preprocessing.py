@@ -1,7 +1,7 @@
 import numpy as np
 
 def non_max_suppression(boxes:np.ndarray, max_bbox_overlap:float,
-                        scores) -> list:
+                        scores=None) -> list:
     """
     Suppress overlapping detections.
     :param boxes (np.ndarray): Array of ROIs `(x, y, width, height)`.

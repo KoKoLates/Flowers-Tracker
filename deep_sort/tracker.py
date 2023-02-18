@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from . import kalman_filter, linear_assignment, iou_matching, nn_matching
+from . import kalman_filter, linear_assignment, iou_matching, nn_matching, detection
 from .track import Track
 
 import numpy as np
@@ -8,7 +8,7 @@ class Tracker(object):
     """ multi-target tracker. """
 
     def __init__(self, metric:nn_matching.NearestNeighborDistanceMetric, 
-                 max_iou_distance:float=0.7, max_age:int=30, n_init:int=3) -> None:
+                 max_iou_distance:float=0.7, max_age:int=50, n_init:int=3) -> None:
         """
         :param metric (NearestNeighborDistanceMetric): The distance metric used for 
         measurement to track association.
@@ -64,7 +64,7 @@ class Tracker(object):
             features = np.array([dets[i].feature for i in detection_indices])
             targets = np.array([tracks[i].track_id for i in track_indices])
             cost_matrix = self.metric.distance(features, targets)
-            cost_matrix = linear_assignment.gate_cost_matrix(
+            cost_matrix = linear_assignment.get_cost_matrix(
                 self.kf, cost_matrix, tracks, dets, track_indices, detection_indices
             )
             return cost_matrix
@@ -95,9 +95,9 @@ class Tracker(object):
         unmatched_tracks = list(set(unmatched_tracks_a + unmatched_tracks_b))
         return matches, unmatched_tracks, unmatched_detections
 
-    def _initiate_track(self, detection):
+    def _initiate_track(self, detection:detection.Detection):
         mean, covariance = self.kf.initiate(detection.to_xyah())
         self.tracks.append(Track(
             mean, covariance, self._next_id, self.n_init, self.max_age,
-            detection.feature))
+            detection.feature, detection.get_class()))
         self._next_id += 1

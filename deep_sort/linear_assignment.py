@@ -6,10 +6,9 @@ import numpy as np
 
 INFTY_COST = 1e+5
 
-def min_cost_matching(
-        distance_metric, max_distance: float, tracks, detections, 
-        track_indices=None, detection_indices=None
-    ) -> list:
+def min_cost_matching(distance_metric, max_distance: float, 
+                      tracks, detections, track_indices=None, 
+                      detection_indices=None) -> list:
     """
     Solving the linear assignment problem.
     :param distance_metric: a list of tracks and detections as well as
@@ -30,6 +29,7 @@ def min_cost_matching(
     cost_matrix = distance_metric(tracks, detections, track_indices, detection_indices)
     cost_matrix[cost_matrix > max_distance] = max_distance + 1e-5
     indices = linear_assignment(cost_matrix)
+    indices = np.transpose(np.asarray(indices))
 
     matches, unmatched_tracks, unmatched_detections = [], [], []
     for col, detection_idx in enumerate(detection_indices):
@@ -50,10 +50,8 @@ def min_cost_matching(
             matches.append((track_idx, detection_idx))
     return matches, unmatched_tracks, unmatched_detections
 
-def matching_cascade(
-        distance_metric, max_distance:float, cascade_depth:int, tracks, 
-        detections, track_indices=None, detection_indices=None
-    ) -> list:
+def matching_cascade(distance_metric, max_distance:float, cascade_depth:int, 
+                     tracks, detections, track_indices=None, detection_indices=None) -> list:
     """
     Running matching cascade
     :param distance_metric: The distance metric is given a list of tracks 
@@ -89,10 +87,9 @@ def matching_cascade(
     return matches, unmatched_tracks, unmatched_detections
 
 
-def get_cost_matrix(
-        kf, cost_matrix: np.ndarray, tracks, detections, track_indices, 
-        detection_indices, gated_cost=INFTY_COST, only_position=False
-    ) -> np.ndarray:
+def get_cost_matrix(kf, cost_matrix: np.ndarray, tracks, 
+                    detections, track_indices, detection_indices, 
+                    gated_cost=INFTY_COST, only_position=False) -> np.ndarray:
     """
     Invalidate infeasible entries in cost matrix based on the state
     distributions obtained by Kalman filtering.

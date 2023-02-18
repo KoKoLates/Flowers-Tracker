@@ -26,7 +26,7 @@ class KalmanFilter(object):
         self._std_weight_position = 1. / 20
         self._std_weight_velocity = 1. / 160
 
-    def initialize(self, measurement: np.ndarray):
+    def initiate(self, measurement: np.ndarray):
         """
         Create track from unassociated measurement.
         :param measurement (ndarray): Bounding box coordinates `(x, y, a, h)` 
@@ -50,7 +50,34 @@ class KalmanFilter(object):
             10 * self._std_weight_velocity * measurement[3]
         ]
         covariance = np.diag(np.square(std))
-        return (mean, covariance)
+        return mean, covariance
+    
+    def predict(self, mean:np.ndarray, covariance:np.ndarray):
+        """
+        Run Kalman filter prediction step.
+        :param mean (np.ndarray): mean vector of the object state 
+        at the previous time step.
+        :param covariance (np.ndarray): covariance matrix of the object state at the
+        previous time step.
+        :return: mean vector and covariance matrix of the predicted state.
+        :rtype: (ndarray, ndarray)
+        """
+        std_pos = [
+            self._std_weight_position * mean[3],
+            self._std_weight_position * mean[3],
+            1e-2,
+            self._std_weight_position * mean[3]]
+        std_vel = [
+            self._std_weight_velocity * mean[3],
+            self._std_weight_velocity * mean[3],
+            1e-5,
+            self._std_weight_velocity * mean[3]]
+        motion_cov = np.diag(np.square(np.r_[std_pos, std_vel]))
+
+        mean = np.dot(self._motion_mat, mean)
+        covariance = np.linalg.multi_dot((self._motion_mat, covariance, self._motion_mat.T)) + motion_cov
+
+        return mean, covariance
 
     def project(self, mean:np.ndarray, covariance:np.ndarray):
         """
@@ -71,7 +98,7 @@ class KalmanFilter(object):
 
         mean = np.dot(self._update_mat, mean)
         covariance = np.linalg.multi_dot((self._update_mat, covariance, self._update_mat.T))
-        return (mean, covariance + innovation_cov)
+        return mean, covariance + innovation_cov
 
     def update(self, mean:np.ndarray, covariance:np.ndarray, measurement:np.ndarray):
         """
@@ -93,10 +120,8 @@ class KalmanFilter(object):
         )
         return new_mean, new_covariance
 
-    def gating_distance(
-            self, mean:np.ndarray, covariance:np.ndarray, 
-            measurements:np.ndarray, only_position:bool=False
-        ) -> np.ndarray:
+    def gating_distance(self, mean:np.ndarray, covariance:np.ndarray, 
+                        measurements:np.ndarray, only_position:bool=False) -> np.ndarray:
         """
         Compute gating distance between state distribution and measurements
         """

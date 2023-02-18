@@ -18,7 +18,7 @@ class Track(object):
     """
     def __init__(self, mean:np.ndarray, covariance:np.ndarray,
                  track_id:int, n_init:int, max_age:int, 
-                 feature:np.ndarray=None) -> None:
+                 feature:np.ndarray=None, class_name=None) -> None:
         """
         :param mean (np.ndarray): Mean vector of the initial state distribution.
         :param covariance (np.ndarray): Covariance matrix of the initial state distribution.
@@ -30,7 +30,7 @@ class Track(object):
         """
         self.mean, self.covariance = mean, covariance
         self.hits, self.age, self.track_id = 1, 1, track_id
-        self._n_init, self._max_age = n_init, max_age
+        self._n_init, self._max_age, self.class_name = n_init, max_age, class_name
         self.time_since_update = 0
 
         self.state = TrackState.Tentative
@@ -107,3 +107,6 @@ class Track(object):
     def is_deleted(self) -> None:
         """ Returns True if this track is dead and should be deleted. """
         return self.state == TrackState.Deleted
+    
+    def get_class(self):
+        return self.class_name
