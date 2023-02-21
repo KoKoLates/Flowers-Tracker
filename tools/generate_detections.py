@@ -187,6 +187,5 @@ def main():
     encoder = create_box_encoder(args.model, batch_size=32)
     generate_detections(encoder, args.mot_dir, args.output_dir, args.detection_dir)
 
-
 if __name__ == "__main__":
     main()

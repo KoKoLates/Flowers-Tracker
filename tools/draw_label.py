@@ -7,11 +7,14 @@ def image_argumenrs():
     and label text path
     """
     parse = argparse.ArgumentParser()
-    parse.add_argument('--image_path', type=str, default='./tools/images/IMG_1.jpg')
-    parse.add_argument('--label_path', type=str, default='./tools/images/IMG_1.txt')
+    parse.add_argument('--image_path', type=str, default='./tools/images/test.jpg')
+    parse.add_argument('--label_path', type=str, default='./tools/images/test.txt')
     return parse.parse_args()
 
 if __name__ == '__main__':
+    """
+    Drawing the labeling rectangle boxes.
+    """
     arguments = image_argumenrs()
     image = cv2.imread(arguments.image_path)
     image_width, image_heigth = image.shape[1], image.shape[0]
@@ -28,7 +31,6 @@ if __name__ == '__main__':
             max_x, max_y = center_x + (bbox_width / 2), center_y + (bbox_height / 2)
             cv2.rectangle(image, (int(min_x), int(min_y)), (int(max_x), int(max_y)), 
                           (0, 255, 255), 2)
-            
             
         f.close()
     cv2.imshow('image', image)

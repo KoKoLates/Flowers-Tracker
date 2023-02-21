@@ -106,3 +106,4 @@ class NearestNeighborDistanceMetric(object):
         """
         distances = NearestNeighborDistanceMetric._cosine_distance(x, y)
         return distances.min(axis=0)
+    

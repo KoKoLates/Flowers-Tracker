@@ -3,15 +3,21 @@ import numpy as np
 
 from yolo.config import cfg
 
-def load_config(config: dict):
+def load(config: dict, type:str):
+    if type not in ['convert', 'tracker']:
+        raise ValueError
+    
+
+
+def load_config(args):
     """ Loading the model configuration """
-    strides = np.array(cfg.YOLO.STRIDES_TINY if config['tiny'] else cfg.YOLO.STRIDES)
+    strides = np.array(cfg.YOLO.STRIDES_TINY if args.is_tiny else cfg.YOLO.STRIDES)
     anchors = load_anchors(
-        cfg.YOLO.ANCHORS_TINY if config['tiny'] else cfg.YOLO.ANCHORS, 
-        config['tiny']
+        cfg.YOLO.ANCHORS_TINY if args.is_tiny else cfg.YOLO.ANCHORS, 
+        args.is_tiny
     )
-    scales = cfg.YOLO.XYSCALE_TINY if config['tiny'] else cfg.YOLO.XYSCALE
-    num_class = len(config['class_file'])
+    scales = cfg.YOLO.XYSCALE_TINY if args.is_tiny else cfg.YOLO.XYSCALE
+    num_class = len(read_class_names(args.class_names))
     return strides, anchors, num_class, scales
 
 
@@ -20,7 +26,7 @@ def load_anchors(anchors_cfg, tiny:bool=False):
     return anchors.reshape(2, 3, 2) if tiny else anchors.reshape(3, 3, 2)
 
 
-def read_class_name(class_file_name):
+def read_class_names(class_file_name):
     names = {}
     with open(class_file_name, 'r') as data:
         for id, name in enumerate(data):
@@ -63,3 +69,15 @@ def load_weight(model, weights_file:str, is_tiny:bool=False) -> None:
             conv_layer.set_weights([conv_weights, conv_bias])
     
     file.close()
+
+def format_boxes(bboxes, image_height, image_width):
+    for box in bboxes:
+        ymin = int(box[0] * image_height)
+        xmin = int(box[1] * image_width)
+        ymax = int(box[2] * image_height)
+        xmax = int(box[3] * image_width)
+        width = xmax - xmin
+        height = ymax - ymin
+        box[0], box[1], box[2], box[3] = xmin, ymin, width, height
+
+    return bboxes
