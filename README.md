@@ -1,19 +1,20 @@
-# flowers tracker
+# Flowers Tracker
 A tracker and counter for Eustoma Grandiflorum flowers by using `YOLOv4` and `Deep SORT`.
 
+![image](./img//flowers.png)
+![image](./img/tracking.gif)
 ## Requirement
-* tensorflow-gpu==2.3.0
-* opencv-python==4.1.1.26
-* lxml
+* tensorflow-gpu
+* opencv-python
+* numpy
 * tqdm
 * argparse
-* easydict
 * matplotlib
 * pillow
 
-## Quick Start
+## Instruction
 __0. Requirements Setup__
-```python
+```shell
 # tensorflow CPU
 pip install -r requirements.txt
 
@@ -21,38 +22,57 @@ pip install -r requirements.txt
 # tensorflow 2 packages require a PIP version > 19.0
 pip install -r requirements-gpu.txt
 ```
+__1. Download Repository__
+```shell
+git clone https://github.com/KoKoLates/Flowers-Tracker.git
+```
+__2. Download the model and weights__ <br>
+
+
+__3. Convert the darknet model into tensortflow model__
+```shell
+python converter.py --model yolov4
+
+python converter.py --weights ./data/yolov4-tiny.weights --output ./checkpoints/yolov4-tiny --model yolov4 --tiny
+```
+
+__4. Running the YOLO v4 deep SORT__
+```shell
+# Run yolov4 deep sort object tracker on video
+python tracker.py --video ./data/video/test.mp4 --output ./outputs/demo.avi --model yolov4
+
+python object_tracker.py --weights ./checkpoints/yolov4-tiny --model yolov4 --video ./data/video/test.mp4 --output ./outputs/tiny.avi --tiny
+```
 
 ## Citation
 
 __YOLOv4__
-
-    @misc{bochkovskiy2020yolov4,
-    title={YOLOv4: Optimal Speed and Accuracy of Object Detection},
-    author={Alexey Bochkovskiy and Chien-Yao Wang and Hong-Yuan Mark Liao},
-    year={2020},
-    eprint={2004.10934},
-    archivePrefix={arXiv},
-    primaryClass={cs.CV}
-    }
+```
+@article{bochkovskiy2020yolov4,
+  title={Yolov4: Optimal speed and accuracy of object detection},
+  author={Bochkovskiy, Alexey and Wang, Chien-Yao and Liao, Hong-Yuan Mark},
+  journal={arXiv preprint arXiv:2004.10934},
+  year={2020}
+}
+```
 
 __Deep_SORT__
+```
+@inproceedings{wojke2017simple,
+  title={Simple online and realtime tracking with a deep association metric},
+  author={Wojke, Nicolai and Bewley, Alex and Paulus, Dietrich},
+  booktitle={2017 IEEE international conference on image processing (ICIP)},
+  pages={3645--3649},
+  year={2017},
+  organization={IEEE}
+}
 
-    @inproceedings{Wojke2017simple,
-    title={Simple Online and Realtime Tracking with a Deep Association Metric},
-    author={Wojke, Nicolai and Bewley, Alex and Paulus, Dietrich},
-    booktitle={2017 IEEE International Conference on Image Processing (ICIP)},
-    year={2017},
-    pages={3645--3649},
-    organization={IEEE},
-    doi={10.1109/ICIP.2017.8296962}
-    }
-
-    @inproceedings{Wojke2018deep,
-    title={Deep Cosine Metric Learning for Person Re-identification},
-    author={Wojke, Nicolai and Bewley, Alex},
-    booktitle={2018 IEEE Winter Conference on Applications of Computer Vision (WACV)},
-    year={2018},
-    pages={748--756},
-    organization={IEEE},
-    doi={10.1109/WACV.2018.00087}
-    }
+@inproceedings{wojke2018deep,
+  title={Deep cosine metric learning for person re-identification},
+  author={Wojke, Nicolai and Bewley, Alex},
+  booktitle={2018 IEEE winter conference on applications of computer vision (WACV)},
+  pages={748--756},
+  year={2018},
+  organization={IEEE}
+}
+```

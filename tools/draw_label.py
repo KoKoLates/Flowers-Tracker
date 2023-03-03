@@ -1,5 +1,4 @@
-import cv2
-import argparse
+import cv2, argparse
 
 def image_argumenrs():
     """
