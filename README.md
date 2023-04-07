@@ -12,38 +12,6 @@ A tracker and counter for Eustoma Grandiflorum flowers by using `YOLOv4` and `De
 * matplotlib
 * pillow
 
-## Instruction
-__0. Requirements Setup__
-```shell
-# tensorflow CPU
-pip install -r requirements.txt
-
-# tensorflow GPU
-# tensorflow 2 packages require a PIP version > 19.0
-pip install -r requirements-gpu.txt
-```
-__1. Download Repository__
-```shell
-git clone https://github.com/KoKoLates/Flowers-Tracker.git
-```
-__2. Download the model and weights__ <br>
-
-
-__3. Convert the darknet model into tensortflow model__
-```shell
-python converter.py --model yolov4
-
-python converter.py --weights ./data/yolov4-tiny.weights --output ./checkpoints/yolov4-tiny --model yolov4 --tiny
-```
-
-__4. Running the YOLO v4 deep SORT__
-```shell
-# Run yolov4 deep sort object tracker on video
-python tracker.py --video ./data/video/test.mp4 --output ./outputs/demo.avi --model yolov4
-
-python object_tracker.py --weights ./checkpoints/yolov4-tiny --model yolov4 --video ./data/video/test.mp4 --output ./outputs/tiny.avi --tiny
-```
-
 ## Citation
 
 __YOLOv4__
