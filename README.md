@@ -1,5 +1,5 @@
 # Flowers Tracker
-The flower tracker and counter based on the mulitple object tracking that implemented with `YOLOv4`, `Deep SORT` and `TensorFlow`. 
+The flower tracker and counter based on the mulitple object tracking that implemented with YOLOv4, Deep SORT and TensorFlow. 
 
 ![image](./assets/flowers.png)
 ![image](./assets/tracking.gif)
@@ -13,9 +13,17 @@ pip install -r requirements.txt
 # TensorFlow GPU
 pip install -r requirements-gpu.txt
 ```
+**Nvidia Driver** <Br>
+For GPU, if not using conda environment. Make sure to use CUDA Toolkit version 10.1 as it is the proper version for the TensorFlow version used in this repository. 
+* [CUDA Toolkit](https://developer.nvidia.com/cuda-10.1-download-archive-update2)
+
+**Official Pre-trained Model** <br>
+Our object tracker uses YOLOv4 to make the object detections, which deep sort then uses to track. There exists an official pre-trained YOLOv4 object detector model that is able to detect 80 classes.
+* [YOLOv4]( https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT)
+* [YOLOv4-tiny](https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights)
 
 ## Running the Tracker with YOLOv4 tiny
-The tracker allow user to use detection like YOLOv3, YOLOv4 and tiny. The following command is used for YOLOv4 tiny model. `Yolov4-tiny` allows you to obtain a higher speed (FPS) for the tracker at a slight cost to accuracy. Make sure that you have downloaded the tiny weights file and added it to the `cfg` folder in order for commands to work.
+The following command is used for YOLOv4 tiny model. `Yolov4-tiny` allows you to obtain a higher speed (FPS) for the tracker at a slight cost to accuracy. Make sure that you have downloaded the tiny weights file and added it to the `cfg` folder in order for commands to work.
 ```shell
 # convert yolov4-tiny model
 python converter.py --weight_path ./data/yolov4-tiny.weights --output_path ./checkpoints/yolov4-tiny --model yolov4 --tiny
