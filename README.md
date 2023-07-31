@@ -1,16 +1,28 @@
 # Flowers Tracker
-A tracker and counter for Eustoma Grandiflorum flowers by using `YOLOv4` and `Deep SORT`.
+The flower tracker and counter based on the mulitple object tracking that implemented with `YOLOv4`, `Deep SORT` and `TensorFlow`. 
 
-![image](./img//flowers.png)
-![image](./img/tracking.gif)
-## Requirement
-* tensorflow-gpu
-* opencv-python
-* numpy
-* tqdm
-* argparse
-* matplotlib
-* pillow
+![image](./assets/flowers.png)
+![image](./assets/tracking.gif)
+
+## Getting Started
+Install the proper dependencies via pip or anaconda. Notes that tensorflow 2 packages required a pip version larger than 19.0.
+```shell
+# TensorFlow CPU
+pip install -r requirements.txt
+
+# TensorFlow GPU
+pip install -r requirements-gpu.txt
+```
+
+## Running the Tracker with YOLOv4 tiny
+The tracker allow user to use detection like YOLOv3, YOLOv4 and tiny. The following command is used for YOLOv4 tiny model. `Yolov4-tiny` allows you to obtain a higher speed (FPS) for the tracker at a slight cost to accuracy. Make sure that you have downloaded the tiny weights file and added it to the `cfg` folder in order for commands to work.
+```shell
+# convert yolov4-tiny model
+python converter.py --weight_path ./data/yolov4-tiny.weights --output_path ./checkpoints/yolov4-tiny --model yolov4 --tiny
+
+# Run yolov4-tiny object tracker
+python tracker.py --weight_path ./checkpoints/yolov4-tiny --model yolov4 --video ./data/video/test.mp4 --output_path ./outputs/tiny.avi --tiny
+```
 
 ## Citation
 
@@ -24,7 +36,7 @@ __YOLOv4__
 }
 ```
 
-__Deep_SORT__
+__Deep SORT__
 ```
 @inproceedings{wojke2017simple,
   title={Simple online and realtime tracking with a deep association metric},
