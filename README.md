@@ -5,7 +5,7 @@ The flower tracker and counter based on the mulitple object tracking that implem
 ![image](./assets/tracking.gif)
 
 ## Getting Started
-Install the proper dependencies via pip or anaconda. Notes that tensorflow 2 packages required a pip version larger than 19.0.
+Install the proper dependencies via pip or anaconda. Notes that tensorflow 2 packages required a pip 19.0 version or larger ones.
 ```shell
 # TensorFlow CPU
 pip install -r requirements.txt
@@ -13,14 +13,11 @@ pip install -r requirements.txt
 # TensorFlow GPU
 pip install -r requirements-gpu.txt
 ```
-**Nvidia Driver** <Br>
-For GPU, if not using conda environment. Make sure to use CUDA Toolkit version 10.1 as it is the proper version for the TensorFlow version used in this repository. 
-* [CUDA Toolkit](https://developer.nvidia.com/cuda-10.1-download-archive-update2)
+**nvidia driver** <Br>
+For GPU, if not using conda environment. Make sure to use CUDA Toolkit version 10.1 as it is the proper version for the TensorFlow version used in this repository.
 
-**Official Pre-trained Model** <br>
+**official pre-trained model** <br>
 Our object tracker uses YOLOv4 to make the object detections, which deep sort then uses to track. There exists an official pre-trained YOLOv4 object detector model that is able to detect 80 classes.
-* [YOLOv4]( https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT)
-* [YOLOv4-tiny](https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights)
 
 ## Running the Tracker with YOLOv4 tiny
 The following command is used for YOLOv4 tiny model. `Yolov4-tiny` allows you to obtain a higher speed (FPS) for the tracker at a slight cost to accuracy. Make sure that you have downloaded the tiny weights file and added it to the `cfg` folder in order for commands to work.
