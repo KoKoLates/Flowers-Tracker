@@ -2,32 +2,8 @@
 The flower tracker and counter based on the mulitple object tracking that implemented with YOLOv4, Deep SORT and TensorFlow. 
 
 ![image](./assets/flowers.png)
-![image](./assets/tracking.gif)
+![image](./assets/tiny.gif)
 
-## Getting Started
-Install the proper dependencies via pip or anaconda. Notes that tensorflow 2 packages required a pip 19.0 version or larger ones.
-```shell
-# TensorFlow CPU
-pip install -r requirements.txt
-
-# TensorFlow GPU
-pip install -r requirements-gpu.txt
-```
-**nvidia driver** <Br>
-For GPU, if not using conda environment. Make sure to use CUDA Toolkit version 10.1 as it is the proper version for the TensorFlow version used in this repository.
-
-**official pre-trained model** <br>
-Our object tracker uses YOLOv4 to make the object detections, which deep sort then uses to track. There exists an official pre-trained YOLOv4 object detector model that is able to detect 80 classes.
-
-## Running the Tracker with YOLOv4 tiny
-The following command is used for YOLOv4 tiny model. `Yolov4-tiny` allows you to obtain a higher speed (FPS) for the tracker at a slight cost to accuracy. Make sure that you have downloaded the tiny weights file and added it to the `cfg` folder in order for commands to work.
-```shell
-# convert yolov4-tiny model
-python converter.py --weight_path ./data/yolov4-tiny.weights --output_path ./checkpoints/yolov4-tiny --model yolov4 --tiny
-
-# Run yolov4-tiny object tracker
-python tracker.py --weight_path ./checkpoints/yolov4-tiny --model yolov4 --video ./data/video/test.mp4 --output_path ./outputs/tiny.avi --tiny
-```
 
 ## Citation
 
