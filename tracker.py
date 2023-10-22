@@ -23,7 +23,6 @@ from arguments import tracker_arguments
 
 
 def main(args) -> None:
-    """"""
     # Definination of the parameters
     max_cos_distance:float = 0.4
     nn_budget, nms_max_overlap:float = None, 1.0

@@ -5,9 +5,6 @@ from arguments import converter_arguments
 from yolo.yolov4 import YOLO, decode, filter_boxes
 
 def main(args) -> None:
-    """
-    :param configs (list): the list of configurations of parameter, model and loader file path
-    """
     strides, anchors, num_class, scales =  utils.load_config(args)
 
     input_layer = tf.keras.layers.Input([args.input_size, args.input_size, 3])
