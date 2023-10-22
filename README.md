@@ -22,14 +22,14 @@ pip install -r requirements-gpu.txt
 ```bash
 # convert yolov4-tiny model
 python converter.py --weights ./data/yolov4-tiny.weights 
-					--output ./checkpoints/yolov4-tiny-416 
-					--model yolov4 --tiny
+                    --output ./checkpoints/yolov4-tiny-416 
+                    --model yolov4 --tiny
 
 # Run yolov4-tiny object tracker
 python tracker.py --weights ./checkpoints/yolov4-tiny-416 
-				  --video ./data/video/test.mp4 
-				  --output ./outputs/tiny.avi
-				  --model yolov4 --tiny
+                  --video ./data/video/test.mp4 
+                  --output ./outputs/tiny.avi
+                  --model yolov4 --tiny
 ```
 
 
@@ -39,31 +39,31 @@ python tracker.py --weights ./checkpoints/yolov4-tiny-416
 __YOLOv4__
 ```
 @article{bochkovskiy2020yolov4,
-	title={Yolov4: Optimal speed and accuracy of object detection},
-	author={Bochkovskiy, Alexey and Wang, Chien-Yao and Liao, Hong-Yuan Mark},
-	journal={arXiv preprint arXiv:2004.10934},
-	year={2020}
+    title={Yolov4: Optimal speed and accuracy of object detection},
+    author={Bochkovskiy, Alexey and Wang, Chien-Yao and Liao, Hong-Yuan Mark},
+    journal={arXiv preprint arXiv:2004.10934},
+    year={2020}
 }
 ```
 
 __Deep SORT__
 ```
 @inproceedings{wojke2017simple,
-	title={Simple online and realtime tracking with a deep association metric},
-  	author={Wojke, Nicolai and Bewley, Alex and Paulus, Dietrich},
-  	booktitle={2017 IEEE international conference on image processing (ICIP)},
-  	pages={3645--3649},
-  	year={2017},
-  	organization={IEEE}
+    title={Simple online and realtime tracking with a deep association metric},
+    author={Wojke, Nicolai and Bewley, Alex and Paulus, Dietrich},
+    booktitle={2017 IEEE international conference on image processing (ICIP)},
+    pages={3645--3649},
+    year={2017},
+    organization={IEEE}
 }
 
 @inproceedings{wojke2018deep,
-  	title={Deep cosine metric learning for person re-identification},
-  	author={Wojke, Nicolai and Bewley, Alex},
-  	booktitle={2018 IEEE winter conference on applications of computer vision (WACV)},
-  	pages={748--756},
-  	year={2018},
-  	organization={IEEE}
+    title={Deep cosine metric learning for person re-identification},
+    author={Wojke, Nicolai and Bewley, Alex},
+    booktitle={2018 IEEE winter conference on applications of computer vision (WACV)},
+    pages={748--756},
+    year={2018},
+    organization={IEEE}
 }
 ```
 
